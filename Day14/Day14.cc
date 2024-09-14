@@ -23,35 +23,38 @@ void parseInput(std::string &polymer, std::unordered_map<std::string,char> &map)
   input.close();
 }
 
-uint64_t expandPolymer(const std::string &polymerString, const std::unordered_map<std::string,char> &map)
+uint64_t expandPolymer(const std::string &polymer, const std::unordered_map<std::string,char> &map, unsigned iterations)
 {
 	uint64_t result = 0;
 	
-	std::list<char> polymer;
-	
-	for(auto c:polymerString)
+	std::unordered_map<std::string, uint64_t> pairs;
+	for(unsigned i=0; i<polymer.size()-1; i++)
 	{
-		polymer.push_back(c);
+		pairs[polymer.substr(i,2)]++;
 	}
 	
-	for(unsigned count=0; count<10; count++)
-	{	
-		for(auto it=polymer.begin(); std::next(it,1)!=polymer.end(); it++)
+	for(unsigned count=0; count<iterations; count++)
+	{
+		std::unordered_map<std::string, uint64_t> newPairs;
+		for(auto it=pairs.begin(); it!=pairs.end(); it++)
 		{
-			std::string key;
-			key += (*it);
-			it++;
-			key += (*it);
-			it = polymer.insert(it, map.at(key));
+			uint64_t count = it->second;
+			std::string key1 = it->first;
+			std::string key2 = key1;
+			key1[1] = map.at(it->first);
+			key2[0] = map.at(it->first);
+			newPairs[key1] += count;
+			newPairs[key2] += count;
 		}
+		pairs = newPairs;
 	}
 	
-	std::unordered_map<char,unsigned> freq;
-	
-	for(auto& c:polymer)
+	std::unordered_map<char,uint64_t> freq;
+	for(auto it=pairs.begin(); it!=pairs.end(); it++)
 	{
-		freq[c]++;
+		freq[it->first[0]] += it->second;
 	}
+	freq[polymer.back()]++;
 	
 	uint64_t max = 0;
 	uint64_t min = UINT64_MAX;
@@ -67,78 +70,6 @@ uint64_t expandPolymer(const std::string &polymerString, const std::unordered_ma
 	return result;
 }
 
-//This can be optimized by taking it in steps of 10 instead of 20, then expand each step 3 times. At least I believe that would be faster. You never know until you try though
-uint64_t expandLongPolymer(const std::string &polymerString, const std::unordered_map<std::string,char> &map)
-{
-	uint64_t result = 0;
-	
-	std::unordered_map<std::string,std::pair<uint64_t,uint64_t>> cache;
-	
-	for(auto mapIt=map.begin(); mapIt!=map.end(); mapIt++)
-	{
-		std::list<char> polymer;
-		std::string mapKey = mapIt->first;
-		polymer.push_back(mapKey[0]);
-		polymer.push_back(mapKey[1]);
-		for(unsigned count=0; count<20; count++)
-		{	
-			for(auto it=polymer.begin(); std::next(it,1)!=polymer.end(); it++)
-			{
-				std::string key;
-				key += (*it);
-				it++;
-				key += (*it);
-				it = polymer.insert(it, map.at(key));
-			}
-		}
-		std::unordered_map<char,unsigned> freq;
-		
-		for(auto it=polymer.begin(); std::next(it,1)!=polymer.end(); it++)
-		{
-			freq[(*it)]++;
-		}
-		
-		cache[mapKey] = std::make_pair(freq['C'],freq['B']);
-	}
-	
-	std::list<char> polymer;
-	for(auto c:polymerString)
-	{
-		polymer.push_back(c);
-	}
-	
-	for(unsigned count=0; count<20; count++)
-	{	
-		for(auto it=polymer.begin(); std::next(it,1)!=polymer.end(); it++)
-		{
-			std::string key;
-			key += (*it);
-			it++;
-			key += (*it);
-			it = polymer.insert(it, map.at(key));
-		}
-	}
-	
-	for(auto it=polymer.begin(); std::next(it,1)!=polymer.end(); it++)
-	{
-		std::string key;
-		key += *it;
-		key += *(std::next(it,1));
-		result += cache.at(key).first - cache.at(key).second;
-	}
-	
-	if(polymerString.back() == 'C')
-	{
-		result++;
-	}
-	else if(polymerString.back() == 'B')
-	{
-		result--;
-	}
-	
-	return result;
-}
-
 int main()
 {
 	uint64_t resultA = 0;
@@ -149,8 +80,8 @@ int main()
   
   parseInput(polymer, map);
 
- 	resultA = expandPolymer(polymer, map);
- 	resultB = expandLongPolymer(polymer, map);
+ 	resultA = expandPolymer(polymer, map, 10);
+ 	resultB = expandPolymer(polymer, map, 40);
 
   std::cout << "resultA: " << resultA << '\n';
   std::cout << "resultB: " << resultB << std::endl;
