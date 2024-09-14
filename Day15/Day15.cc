@@ -6,9 +6,9 @@
 
 struct Walker
 {
-	size_t x = 0;
-	size_t y = 0;
-	unsigned cost = 0;
+	uint16_t x = 0;
+	uint16_t y = 0;
+	uint16_t cost = 0;
 };
 
 struct SortWalkers
@@ -64,7 +64,7 @@ uint64_t traverseMap(const std::vector<std::string> &map, unsigned multiplier)
 		{
 			newWalker = walker;
 			newWalker.x--;
-			unsigned addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
+			uint16_t addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
 			addedCost += (newWalker.x/mapSizeX) + (newWalker.y/mapSizeY);
 			addedCost = (addedCost > 9) ? addedCost-9 : addedCost;
 			newWalker.cost += addedCost;
@@ -74,7 +74,7 @@ uint64_t traverseMap(const std::vector<std::string> &map, unsigned multiplier)
 		{
 			newWalker = walker;
 			newWalker.x++;
-			unsigned addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
+			uint16_t addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
 			addedCost += (newWalker.x/mapSizeX) + (newWalker.y/mapSizeY);
 			addedCost = (addedCost > 9) ? addedCost-9 : addedCost;
 			newWalker.cost += addedCost;
@@ -84,7 +84,7 @@ uint64_t traverseMap(const std::vector<std::string> &map, unsigned multiplier)
 		{
 			newWalker = walker;
 			newWalker.y--;
-			unsigned addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
+			uint16_t addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
 			addedCost += (newWalker.x/mapSizeX) + (newWalker.y/mapSizeY);
 			addedCost = (addedCost > 9) ? addedCost-9 : addedCost;
 			newWalker.cost += addedCost;
@@ -94,7 +94,7 @@ uint64_t traverseMap(const std::vector<std::string> &map, unsigned multiplier)
 		{
 			newWalker = walker;
 			newWalker.y++;
-			unsigned addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
+			uint16_t addedCost = map[newWalker.y % mapSizeY][newWalker.x % mapSizeX] - '0';
 			addedCost += (newWalker.x/mapSizeX) + (newWalker.y/mapSizeY);
 			addedCost = (addedCost > 9) ? addedCost-9 : addedCost;
 			newWalker.cost += addedCost;
