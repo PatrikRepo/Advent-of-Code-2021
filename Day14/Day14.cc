@@ -2,8 +2,6 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
-#include <list>
-#include <utility>
 
 void parseInput(std::string &polymer, std::unordered_map<std::string,char> &map)
 {
